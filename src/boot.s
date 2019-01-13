@@ -3,7 +3,7 @@
 .set MEMINFO,  1<<1              /* provide memory map */
 .set FLAGS,    ALIGN | MEMINFO   /* this is the Multiboot 'flag' field */
 .set MAGIC,    0x1BADB002        /* 'magic number' lets bootloader find the header */
-.set CHECHSUM, -(MAGIC + FLAGS)  /* checksum of above, to prove we are multiboot */
+.set CHECKSUM, -(MAGIC + FLAGS)  /* checksum of above, to prove we are multiboot */
 
 /*
 Declare a multiboot header that marks the program as a kernel.
