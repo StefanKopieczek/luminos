@@ -1,3 +1,4 @@
 toolchain/
+build/
 *.[oa]
 *.sw[op]
