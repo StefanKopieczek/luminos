@@ -6,19 +6,22 @@ clean:
 build-dir:
 	mkdir -p build
 
-assemble-bootfile: build-dir
+boot.o: build-dir
 	toolchain/bin/i686-elf-as src/boot.s -o build/boot.o
 
-compile-kernel: build-dir
+kernel.o: build-dir
 	toolchain/bin/i686-elf-g++ -c src/kernel.cpp -o build/kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
-.link-kernel: compile-kernel
-	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/$(osname).bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o -lgcc
+terminal.o: build-dir
+	toolchain/bin/i686-elf-g++ -c src/terminal.cpp -o build/terminal.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+
+.link-kernel: boot.o kernel.o terminal.o
+	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/$(osname).bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o build/terminal.o -lgcc
 
 confirm-multiboot:
 	grub-file --is-x86-multiboot build/$(osname).bin
 
-link-kernel: assemble-bootfile compile-kernel .link-kernel confirm-multiboot
+link-kernel: .link-kernel confirm-multiboot
 
 build-iso: link-kernel
 	mkdir -p build/isodir/boot/grub
