@@ -12,6 +12,10 @@
 #error "This tutorial needs to be compiled with an ix86-elf compiler"
 #endif
 
+extern "C" {
+    void kernel_main();
+}
+
 /* Hardware text mode color constants. */
 enum vga_color {
     VGA_COLOR_BLACK = 0,

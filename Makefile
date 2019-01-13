@@ -8,10 +8,10 @@ assemble-bootfile: build-dir
 	toolchain/bin/i686-elf-as src/boot.s -o build/boot.o
 
 compile-kernel: build-dir
-	toolchain/bin/i686-elf-gcc -c src/kernel.c -o build/kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
+	toolchain/bin/i686-elf-g++ -c src/kernel.cpp -o build/kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
 
 .link-kernel: compile-kernel
-	toolchain/bin/i686-elf-gcc -T src/linker.ld -o build/os.bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o -lgcc
+	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/os.bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o -lgcc
 
 confirm-multiboot:
 	grub-file --is-x86-multiboot build/os.bin
