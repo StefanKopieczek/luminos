@@ -98,6 +98,7 @@ _start:
        Since interrupts are disabled, this will lock up the computer.
     3) Jump to the 'hlt' instruction if it ever wakes up due to a
        non-maskable interrupt occuring, or due to system management mode.
+    */
        cli
 1:     hlt
        jmp 1b
