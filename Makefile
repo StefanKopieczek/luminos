@@ -1,3 +1,11 @@
+OBJS:=build/boot.o build/kernel.o build/splash.o build/terminal.o build/util.o
+
+CRTI_OBJ=build/crti.o
+CRTBEGIN_OBJ:=$(shell toolchain/bin/i686-elf-g++ -print-file-name=crtbegin.o)
+CRTEND_OBJ:=$(shell toolchain/bin/i686-elf-g++ -print-file-name=crtend.o)
+CRTN_OBJ=build/crtn.o
+OBJ_LINK_LIST:=$(CRTI_OBJ) $(CRTBEGIN_OBJ) $(OBJS) $(CRTEND_OBJ) $(CRTN_OBJ)
+
 define assemble
 	toolchain/bin/i686-elf-as src/$(1).s -o build/$(1).o
 endef
@@ -17,6 +25,12 @@ build-dir:
 build/boot.o: build-dir
 	$(call assemble,boot)
 
+build/crti.o: build-dir
+	$(call assemble,crti)
+
+build/crtn.o: build-dir
+	$(call assemble,crtn)
+
 build/kernel.o: build-dir
 	$(call compile,kernel)
 
@@ -30,8 +44,8 @@ build/util.o: build-dir
 	$(call compile,util)
 
 .PHONY: link-kernel
-link-kernel: build/boot.o build/kernel.o build/splash.o build/terminal.o build/util.o
-	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/luminos.bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o build/splash.o build/terminal.o build/util.o -lgcc
+link-kernel: $(OBJ_LINK_LIST)
+	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/luminos.bin -ffreestanding -O2 -nostdlib $(OBJ_LINK_LIST) -lgcc
 
 .PHONY: confirm-multiboot
 confirm-multiboot:

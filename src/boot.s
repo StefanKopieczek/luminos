@@ -77,6 +77,8 @@ _start:
     runtime support to work as well
     */
 
+    call _init
+
     /*
     Enter the high-level kernel. The ABI requires the stack is 16-byte
     aligned at the time of the call instruction (which afterwards pushes the
@@ -86,6 +88,8 @@ _start:
     is well defined.
     */
     call kernel_main
+
+    call _fini
 
     /*
     If the system has nothing more to do, put the computer into an infinite
