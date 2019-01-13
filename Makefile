@@ -1,33 +1,50 @@
-osname = luminos
+define assemble
+	toolchain/bin/i686-elf-as src/$(1).s -o build/$(1).o
+endef
 
+define compile
+	toolchain/bin/i686-elf-g++ -c src/$(1).cpp -o build/$(1).o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+endef
+
+.PHONY: clean
 clean:
 	rm -rf build
 
+.PHONY: build-dir
 build-dir:
 	mkdir -p build
 
-boot.o: build-dir
-	toolchain/bin/i686-elf-as src/boot.s -o build/boot.o
+build/boot.o: build-dir
+	$(call assemble,boot)
 
-kernel.o: build-dir
-	toolchain/bin/i686-elf-g++ -c src/kernel.cpp -o build/kernel.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+build/kernel.o: build-dir
+	$(call compile,kernel)
 
-terminal.o: build-dir
-	toolchain/bin/i686-elf-g++ -c src/terminal.cpp -o build/terminal.o -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti
+build/splash.o: build-dir
+	$(call compile,splash)
 
-.link-kernel: boot.o kernel.o terminal.o
-	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/$(osname).bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o build/terminal.o -lgcc
+build/terminal.o: build-dir
+	$(call compile,terminal)
 
+build/util.o: build-dir
+	$(call compile,util)
+
+.PHONY: link-kernel
+link-kernel: build/boot.o build/kernel.o build/splash.o build/terminal.o build/util.o
+	toolchain/bin/i686-elf-g++ -T src/linker.ld -o build/luminos.bin -ffreestanding -O2 -nostdlib build/boot.o build/kernel.o build/splash.o build/terminal.o build/util.o -lgcc
+
+.PHONY: confirm-multiboot
 confirm-multiboot:
-	grub-file --is-x86-multiboot build/$(osname).bin
+	grub-file --is-x86-multiboot build/luminos.bin
 
-link-kernel: .link-kernel confirm-multiboot
+build/luminos.bin: link-kernel confirm-multiboot
 
-build-iso: link-kernel
+build/luminos.iso: build/luminos.bin
 	mkdir -p build/isodir/boot/grub
-	cp build/$(osname).bin build/isodir/boot
+	cp build/luminos.bin build/isodir/boot
 	cp src/grub.cfg build/isodir/boot/grub
-	grub-mkrescue -o build/$(osname).iso build/isodir
+	grub-mkrescue -o build/luminos.iso build/isodir
 
-qemu: build-iso
-	qemu-system-i386 -cdrom build/$(osname).iso
+.PHONY: qemu
+qemu: build/luminos.iso
+	qemu-system-i386 -cdrom build/luminos.iso

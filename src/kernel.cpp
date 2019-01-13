@@ -1,4 +1,4 @@
-#include <stdbool.h>
+#include "splash.h"
 #include "terminal.h"
 
 /* Check if the compiler thinks you are targeting the wrong OS */
@@ -17,6 +17,7 @@ extern "C" {
 
 void kernel_main(void) {
     terminal_initialize();
-    terminal_writestring("Hello, world...\n");
-    terminal_writestring("You're using LuminOS!\n");
+	splash_draw_luminos();
+	terminal_writestring("\n");
+    splash_draw_lamp();
 }
