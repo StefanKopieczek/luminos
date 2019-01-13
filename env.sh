@@ -1,1 +1,1 @@
-export PATH="$HOME/os/toolchain/bin:$PATH"
+export PATH="$HOME/luminos/toolchain/bin:$PATH"
