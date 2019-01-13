@@ -81,6 +81,11 @@ void terminal_putentryat(char c, uint8_t color, size_t x, size_t y) {
     terminal_buffer[index] = vga_entry(c, color);
 }
 
+void terminal_newline() {
+    terminal_row++;
+    terminal_column = 0;
+}
+
 void terminal_putchar(char c) {
     terminal_putentryat(c, terminal_color, terminal_column, terminal_row);
     if (++terminal_column == VGA_WIDTH) {
@@ -91,9 +96,17 @@ void terminal_putchar(char c) {
     }
 }
 
+void terminal_handle_char(char c) {
+    if (c == '\n') {
+        terminal_newline();
+    } else {
+        terminal_putchar(c);
+    }
+}
+
 void terminal_write(const char* data, size_t size) {
     for (size_t i = 0; i < size; i++) {
-        terminal_putchar(data[i]);
+        terminal_handle_char(data[i]);
     }
 }
 
@@ -103,5 +116,6 @@ void terminal_writestring(const char* data) {
 
 void kernel_main(void) {
     terminal_initialize();
-    terminal_writestring("Hello, kernel world!\n");
+    terminal_writestring("Hello, world...\n");
+    terminal_writestring("You're using LuminOS!\n");
 }
