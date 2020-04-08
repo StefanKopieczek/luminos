@@ -1,3 +1,4 @@
+#include "memory.h"
 #include "splash.h"
 #include "terminal.h"
 
@@ -12,6 +13,7 @@
 #endif
 
 void kernel_main(void) {
+    memory_init();
     terminal_initialize();
 	splash_draw_luminos();
 	terminal_writestring("\n");

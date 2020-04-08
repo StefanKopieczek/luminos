@@ -1,4 +1,4 @@
-OBJS:=build/boot.o build/kernel.o build/splash.o build/terminal.o build/util.o
+OBJS:=build/boot.o build/kernel.o build/memory.o build/splash.o build/terminal.o build/util.o
 
 CRTI_OBJ=build/crti.o
 CRTBEGIN_OBJ:=$(shell toolchain/bin/i686-elf-gcc -print-file-name=crtbegin.o)
@@ -33,6 +33,9 @@ build/crtn.o: build-dir
 
 build/kernel.o: build-dir
 	$(call compile,kernel)
+
+build/memory.o: build-dir
+	$(call compile,memory)
 
 build/splash.o: build-dir
 	$(call compile,splash)
