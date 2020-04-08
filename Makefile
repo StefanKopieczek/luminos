@@ -59,6 +59,9 @@ build/luminos.iso: build/luminos.bin
 	cp src/grub.cfg build/isodir/boot/grub
 	grub-mkrescue -o build/luminos.iso build/isodir
 
+.PHONY: iso
+iso: build/luminos.iso
+
 .PHONY: qemu
 qemu: build/luminos.iso
 	qemu-system-i386 -cdrom build/luminos.iso
