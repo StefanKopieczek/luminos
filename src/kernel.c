@@ -11,10 +11,6 @@
 #error "This tutorial needs to be compiled with an ix86-elf compiler"
 #endif
 
-extern "C" {
-    void kernel_main();
-}
-
 void kernel_main(void) {
     terminal_initialize();
 	splash_draw_luminos();
