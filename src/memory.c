@@ -3,12 +3,12 @@
 void *next = INVALID_ADDR;
 
 void memory_init() {
-    next = RAM_START;
+    next = ASSIGNABLE_MEM_START;
 }
 
 void *malloc(size_t size) {
     void *result = (void *)-1;
-    if (next != INVALID_ADDR && (next + size < RAM_END)) {
+    if (next != INVALID_ADDR && (next + size < ASSIGNABLE_MEM_END)) {
         result = next;
         next += size;
     }

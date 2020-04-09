@@ -2,8 +2,8 @@
 #define _MEMORY_H
 #include <stddef.h>
 
-#define RAM_START (void *)0x00100000
-#define RAM_END (void *)0x00efffff
+#define ASSIGNABLE_MEM_START (void *)0x00200000
+#define ASSIGNABLE_MEM_END (void *)0x00efffff
 #define INVALID_ADDR (void *)-1
 
 void memory_init();
