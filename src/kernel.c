@@ -1,4 +1,5 @@
 #include "gdt.h"
+#include "addresses.h"
 #include "memory.h"
 #include "splash.h"
 #include "terminal.h"
