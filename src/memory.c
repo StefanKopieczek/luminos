@@ -1,14 +1,15 @@
+#include "addresses.h"
 #include "memory.h"
 
 void *next = INVALID_ADDR;
 
 void memory_init() {
-    next = ASSIGNABLE_MEM_START;
+    next = HEAP_START;
 }
 
 void *malloc(size_t size) {
     void *result = (void *)-1;
-    if (next != INVALID_ADDR && (next + size < ASSIGNABLE_MEM_END)) {
+    if (next != INVALID_ADDR && (next + size < HEAP_END)) {
         result = next;
         next += size;
     }
