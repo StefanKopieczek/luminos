@@ -19,6 +19,11 @@
 #define IS_NOT_WRITEABLE  false
 
 typedef struct {
+    uint16_t size_plus_one;
+    uint32_t table_address;
+} gdt_desc;
+
+typedef struct {
     uint16_t limit_lower_bits;
     uint16_t base_lower_bits;
     uint8_t base_mid_bits;
@@ -57,9 +62,16 @@ void write_system_entry(gdt_entry *,
 
 void init_gdt() {
     gdt_entry *gdt_table = GDT_ADDR;
-    write_null_entry(&gdt_table[0]);
-    write_code_entry(&gdt_table[1], 0x0, 0xffffffff, IS_NOT_READABLE, CONFORMS, 0);
-    write_data_entry(&gdt_table[2], 0x0, 0xffffffff, IS_WRITEABLE, GROWS_UP, 0);
+    write_null_entry(gdt_table++);
+    write_code_entry(gdt_table++, 0x0, 0xffffffff, IS_NOT_READABLE, CONFORMS, 0);
+    write_data_entry(gdt_table++, 0x0, 0xffffffff, IS_WRITEABLE, GROWS_UP, 0);
+
+    const int num_entries = (gdt_table - (gdt_entry *)GDT_ADDR);
+    gdt_desc *descriptor = (gdt_desc *) GDT_DESC_ADDR;
+    descriptor->size_plus_one = num_entries + 1;
+    descriptor->table_address = (uint32_t) GDT_ADDR;
+
+    asm("lgdt (%0)" :: "r" (&descriptor));
 }
 
 void write_common_flags(gdt_entry *entry) {

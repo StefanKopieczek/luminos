@@ -14,10 +14,10 @@
 #endif
 
 void kernel_main(void) {
+    init_gdt();
     memory_init();
     terminal_initialize();
 	splash_draw_luminos();
 	terminal_writestring("\n");
     splash_draw_lamp();
-    terminal_putchar(debug());
 }
