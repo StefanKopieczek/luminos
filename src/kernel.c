@@ -1,5 +1,6 @@
 #include "gdt.h"
 #include "addresses.h"
+#include "keyboard.h"
 #include "memory.h"
 #include "splash.h"
 #include "terminal.h"
@@ -21,4 +22,12 @@ void kernel_main(void) {
 	splash_draw_luminos();
 	terminal_writestring("\n");
     splash_draw_lamp();
+
+    init_keyboard();
+    while (1) {
+        keyboard_key key = wait_for_key();
+        if (key_is_char(key)) {
+            terminal_putchar(key_to_char(key));
+        }
+    }
 }
