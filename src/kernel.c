@@ -1,3 +1,4 @@
+#include "gdt.h"
 #include "memory.h"
 #include "splash.h"
 #include "terminal.h"
@@ -18,4 +19,5 @@ void kernel_main(void) {
 	splash_draw_luminos();
 	terminal_writestring("\n");
     splash_draw_lamp();
+    terminal_putchar(debug());
 }

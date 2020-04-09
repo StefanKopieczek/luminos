@@ -24,8 +24,16 @@ void free(void *p) {
 void memcpy(void *dest, const void *src, size_t len) {
     const void *end = src + len;
     while (src < end) {
-        *(int *)dest = *(int *)src;
+        *(char *)dest = *(char *)src;
         src++;
+        dest++;
+    }
+}
+
+void memset(void *dest, char value, size_t len) {
+    const void *end = dest + len;
+    while (dest < end) {
+        *(char *)dest = value;
         dest++;
     }
 }

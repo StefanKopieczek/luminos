@@ -8,5 +8,6 @@ void memory_init();
 void *malloc(size_t size);
 void free(void *p);
 void memcpy(void *dest, const void *src, size_t len);
+void memset(void *dest, char value, size_t len);
 
 #endif
