@@ -307,8 +307,31 @@ char key_to_char(keyboard_key key) {
           return 'Y';
         case KEY_Z:
           return 'Z';
+        case KEY_MINUS:
+        case KEY_KEYPAD_MINUS:
+          return '-';
+        case KEY_KEYPAD_PLUS:
+          return '+';
+        case KEY_LEFT_SQUARE_BRACKET:
+          return '[';
+        case KEY_RIGHT_SQUARE_BRACKET:
+          return ']';
+        case KEY_SEMICOLON:
+          return ';';
+        case KEY_COMMA:
+          return ',';
+        case KEY_BACKSLASH:
+          return '\\';
+        case KEY_BACKTICK:
+          return '`';
+        case KEY_PERIOD:
+          return '.';
+        case KEY_FORWARD_SLASH:
+          return '/';
         case KEY_SPACEBAR:
           return ' ';
+        case KEY_EQUALS:
+          return '=';
         case KEY_ENTER:
         case KEY_KEYPAD_ENTER:
           return '\n';
