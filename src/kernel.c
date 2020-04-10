@@ -3,6 +3,7 @@
 #include "keyboard.h"
 #include "memory.h"
 #include "splash.h"
+#include "string.h"
 #include "terminal.h"
 
 /* Check if the compiler thinks you are targeting the wrong OS */

@@ -1,8 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "addresses.h"
+#include "string.h"
 #include "terminal.h"
-#include "util.h"
 
 static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg) {
     return fg | bg << 4;
