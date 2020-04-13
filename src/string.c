@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdbool.h>
 #include "string.h"
 #include "memory.h"
@@ -68,9 +69,19 @@ char *strncat(char *dest, const char *src, int n) {
         }
     }
     if (src[i] != '\0') {
-        src[i + 1] == '\0';
+        dest[destlen + i + 1] = '\0';
     }
 
+    return dest;
+}
+
+char *strcat(char *dest, const char *src) {
+    char *p = dest;
+    while(*(p++)) {}
+    while(*src) {
+        *(p++) = *(src++);
+    }
+    *p = '\0';
     return dest;
 }
 
@@ -79,4 +90,33 @@ size_t strlen(const char* str) {
     while (str[len])
         len++;
     return len;
+}
+
+int sprintf(char *buf, const char *format, ...) {
+    va_list argp;
+    va_start(argp, format);
+    char *result = buf;
+    while (*format != '\0') {
+        if (*format == '%') {
+            format++;
+            if (*format == 's') {
+                const char *param = va_arg(argp, const char *);
+                strcat(buf, param);
+            } else if (* format == 'd') {
+                int param = va_arg(argp, int);
+                strcat(buf, int2dec(param));
+            } else if (*format == 'x') {
+                int param = va_arg(argp, int);
+                strcat(buf, int2hex(param));
+            } else {
+                // TODO error handling
+                strcat(buf, "<unknown param type>");
+            }
+        } else {
+            *(buf++) = *format;
+        }
+        format++;
+    }
+    buf = '\0';
+    return strlen(result);
 }

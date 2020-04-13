@@ -24,6 +24,10 @@ void kernel_main(void) {
 	terminal_writestring("\n");
     splash_draw_lamp();
 
+    char buf[200];
+    sprintf(buf, "%s=%d\n", "2+2", 4);
+    terminal_writestring(buf);
+
     init_keyboard();
     while (1) {
         keyboard_key key = wait_for_key();
