@@ -1,76 +1,62 @@
-OBJS:=build/boot.o build/gdt.o build/kernel.o build/keyboard.o build/memory.o build/splash.o build/terminal.o build/util.o
+SRC=src
+BUILD=build
 
-CRTI_OBJ=build/crti.o
+CC=toolchain/bin/i686-elf-gcc
+CFLAGS:=-std=gnu99 -ffreestanding -O2 -Wall -Wextra
+AS=toolchain/bin/i686-elf-as
+
+CRTI_OBJ=$(BUILD)/crti.o
 CRTBEGIN_OBJ:=$(shell toolchain/bin/i686-elf-gcc -print-file-name=crtbegin.o)
 CRTEND_OBJ:=$(shell toolchain/bin/i686-elf-gcc -print-file-name=crtend.o)
-CRTN_OBJ=build/crtn.o
+CRTN_OBJ=$(BUILD)/crtn.o
+
+C_SRCS:=$(wildcard $(SRC)/*.c)
+S_SRCS:=$(wildcard $(SRC)/*.s)
+
+C_OBJS:=$(patsubst $(SRC)/%.c,$(BUILD)/%.o,$(C_SRCS))
+
+# When we define OBJ_LINK_LIST later we'll need to put CRTI_OBJ first and CRTN_OBJ last
+# in the input list, so filter them out of the main set of objects to avoid duplicating
+# them.
+S_OBJS_RAW:=$(patsubst $(SRC)/%.s,$(BUILD)/%.o,$(S_SRCS))
+S_OBJS:=$(filter-out $(CRTI_OBJ) $(CRTN_OBJ), $(S_OBJS_RAW))
+
+OBJS:=$(C_OBJS) $(S_OBJS)
 OBJ_LINK_LIST:=$(CRTI_OBJ) $(CRTBEGIN_OBJ) $(OBJS) $(CRTEND_OBJ) $(CRTN_OBJ)
-
-define assemble
-	toolchain/bin/i686-elf-as src/$(1).s -o build/$(1).o
-endef
-
-define compile
-	toolchain/bin/i686-elf-gcc -c src/$(1).c -o build/$(1).o -std=gnu99 -ffreestanding -O2 -Wall -Wextra
-endef
 
 .PHONY: clean
 clean:
-	rm -rf build
+	rm -rf $(BUILD)
 
-.PHONY: build-dir
-build-dir:
-	mkdir -p build
+.PHONY: $(BUILD)-dir
+$(BUILD)-dir:
+	mkdir -p $(BUILD)
 
-build/boot.o: build-dir
-	$(call assemble,boot)
+$(BUILD)/%.o: $(SRC)/%.c $(BUILD)-dir
+	$(CC) -c $< -o $@ $(CFLAGS)
 
-build/crti.o: build-dir
-	$(call assemble,crti)
-
-build/crtn.o: build-dir
-	$(call assemble,crtn)
-
-build/gdt.o: build-dir
-	$(call compile,gdt)
-
-build/kernel.o: build-dir
-	$(call compile,kernel)
-
-build/keyboard.o: build-dir
-	$(call compile,keyboard)
-
-build/memory.o: build-dir
-	$(call compile,memory)
-
-build/splash.o: build-dir
-	$(call compile,splash)
-
-build/terminal.o: build-dir
-	$(call compile,terminal)
-
-build/util.o: build-dir
-	$(call compile,util)
+$(BUILD)/%.o: $(SRC)/%.s $(BUILD)-dir
+	$(AS) -o $@ $<
 
 .PHONY: link-kernel
 link-kernel: $(OBJ_LINK_LIST)
-	toolchain/bin/i686-elf-gcc -T src/linker.ld -o build/luminos.bin -ffreestanding -O2 -nostdlib $(OBJ_LINK_LIST) -lgcc
+	toolchain/bin/i686-elf-gcc -T $(SRC)/linker.ld -o $(BUILD)/luminos.bin -ffreestanding -O2 -nostdlib $(OBJ_LINK_LIST) -lgcc
 
 .PHONY: confirm-multiboot
 confirm-multiboot:
-	grub-file --is-x86-multiboot build/luminos.bin
+	grub-file --is-x86-multiboot $(BUILD)/luminos.bin
 
-build/luminos.bin: link-kernel confirm-multiboot
+$(BUILD)/luminos.bin: link-kernel confirm-multiboot
 
-build/luminos.iso: build/luminos.bin
-	mkdir -p build/isodir/boot/grub
-	cp build/luminos.bin build/isodir/boot
-	cp src/grub.cfg build/isodir/boot/grub
-	grub-mkrescue -o build/luminos.iso build/isodir
+$(BUILD)/luminos.iso: $(BUILD)/luminos.bin
+	mkdir -p $(BUILD)/isodir/boot/grub
+	cp $(BUILD)/luminos.bin $(BUILD)/isodir/boot
+	cp $(SRC)/grub.cfg $(BUILD)/isodir/boot/grub
+	grub-mkrescue -o $(BUILD)/luminos.iso $(BUILD)/isodir
 
 .PHONY: iso
-iso: build/luminos.iso
+iso: $(BUILD)/luminos.iso
 
 .PHONY: qemu
-qemu: build/luminos.iso
-	qemu-system-i386 -cdrom build/luminos.iso
+qemu: $(BUILD)/luminos.iso
+	qemu-system-i386 -cdrom $(BUILD)/luminos.iso
