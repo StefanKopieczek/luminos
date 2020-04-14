@@ -28,14 +28,13 @@ OBJ_LINK_LIST:=$(CRTI_OBJ) $(CRTBEGIN_OBJ) $(OBJS) $(CRTEND_OBJ) $(CRTN_OBJ)
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: $(BUILD)-dir
-$(BUILD)-dir:
+$(BUILD):
 	mkdir -p $(BUILD)
 
-$(BUILD)/%.o: $(SRC)/%.c $(BUILD)-dir
+$(BUILD)/%.o: $(SRC)/%.c $(BUILD)
 	$(CC) -c $< -o $@ $(CFLAGS)
 
-$(BUILD)/%.o: $(SRC)/%.s $(BUILD)-dir
+$(BUILD)/%.o: $(SRC)/%.s $(BUILD)
 	$(AS) -o $@ $<
 
 .PHONY: link-kernel
