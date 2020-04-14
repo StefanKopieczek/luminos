@@ -24,6 +24,9 @@ void kernel_main(void) {
 	terminal_writestring("\n");
     splash_draw_lamp();
 
+    char buf0[200];
+    sprintf(buf0, "1+2=%s\n", "3");
+    terminal_writestring(buf0);
     char buf[200];
     sprintf(buf, "%s=%d\n", "2+2", 4);
     terminal_writestring(buf);

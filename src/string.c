@@ -77,11 +77,21 @@ char *strncat(char *dest, const char *src, int n) {
 
 char *strcat(char *dest, const char *src) {
     char *p = dest;
-    while(*(p++)) {}
-    while(*src) {
+    while(*p)
+        p++;
+
+    while(*src)
+        *(p++) = *(src++);
+
+    *p = '\0';
+    return dest;
+}
+
+char *strcpy(char *dest, const char *src) {
+    char *p = dest;
+    while (*src)  {
         *(p++) = *(src++);
     }
-    *p = '\0';
     return dest;
 }
 
@@ -90,6 +100,13 @@ size_t strlen(const char* str) {
     while (str[len])
         len++;
     return len;
+}
+
+void strappend(char **buf, const char *src) {
+    while (*src) {
+        *((*buf)++) = *(src++);
+    }
+    **buf = '\0';
 }
 
 int sprintf(char *buf, const char *format, ...) {
@@ -101,16 +118,17 @@ int sprintf(char *buf, const char *format, ...) {
             format++;
             if (*format == 's') {
                 const char *param = va_arg(argp, const char *);
-                strcat(buf, param);
+                strappend(&buf, param);
             } else if (* format == 'd') {
                 int param = va_arg(argp, int);
-                strcat(buf, int2dec(param));
+                strappend(&buf, int2dec(param));
             } else if (*format == 'x') {
                 int param = va_arg(argp, int);
-                strcat(buf, int2hex(param));
+                strcpy(buf, int2hex(param));
+                strappend(&buf, int2hex(param));
             } else {
                 // TODO error handling
-                strcat(buf, "<unknown param type>");
+                strappend(&buf, "<unknown param type>");
             }
         } else {
             *(buf++) = *format;
