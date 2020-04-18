@@ -76,6 +76,10 @@ void terminal_put_printable_char(char c) {
 void terminal_putchar(char c) {
     if (c == '\n') {
         terminal_newline();
+    } else if (c == '\t') {
+        for (int i = 0; i < 4; i++) {
+            terminal_putchar(' ');
+        }
     } else {
         terminal_put_printable_char(c);
     }
@@ -89,4 +93,13 @@ void terminal_write(const char* data, size_t size) {
 
 void terminal_writestring(const char* data) {
     terminal_write(data, strlen(data));
+}
+
+void printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    char buf[10000]; // TODO
+    vsprintf(buf, format, args);
+    va_end(args);
+    terminal_writestring(buf);
 }

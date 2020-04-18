@@ -31,5 +31,6 @@ void terminal_initialize();
 void terminal_setcolor(uint8_t);
 void terminal_putchar(char);
 void terminal_writestring(const char*);
+void printf(const char *format, ...);
 
 #endif

@@ -1,5 +1,6 @@
-#include "gdt.h"
 #include "addresses.h"
+#include "debug.h"
+#include "gdt.h"
 #include "keyboard.h"
 #include "memory.h"
 #include "splash.h"
@@ -21,16 +22,14 @@ void kernel_main(void) {
     memory_init();
     terminal_initialize();
 	splash_draw_luminos();
-	terminal_writestring("\n");
+
+    terminal_writestring("\n");
     splash_draw_lamp();
 
-    char buf0[200];
-    sprintf(buf0, "1+2=%s\n", "3");
-    terminal_writestring(buf0);
-    char buf[200];
-    sprintf(buf, "%s=%d\n", "2+2", 4);
-    terminal_writestring(buf);
+    printf("\nMemory dumping GDT...\n\n");
+    debug_memdump(GDT_DESC_ADDR, 100);
 
+    /*
     init_keyboard();
     while (1) {
         keyboard_key key = wait_for_key();
@@ -38,4 +37,5 @@ void kernel_main(void) {
             terminal_putchar(key_to_char(key));
         }
     }
+    */
 }
