@@ -172,11 +172,11 @@ int vsprintf(char *buf, const char *format, va_list args) {
     return strlen(result);
 }
 
-char *lpad(char *dest, const char *src, char padChar, int minLength) {
+char *lpad(char *dest, const char *src, char pad_char, int min_length) {
     char *p = dest;
     int len = strlen(src);
-    for (int i = 0; i < minLength - len; i++) {
-        *(p++) = padChar;
+    for (int i = 0; i < min_length - len; i++) {
+        *(p++) = pad_char;
     }
     strcpy(p, src);
     strappend(&p, src);
