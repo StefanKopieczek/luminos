@@ -1,6 +1,7 @@
 #include "addresses.h"
 #include "debug.h"
 #include "gdt.h"
+#include "interrupt.h"
 #include "keyboard.h"
 #include "memory.h"
 #include "splash.h"
@@ -20,9 +21,19 @@
 void kernel_main(void) {
     init_gdt();
     memory_init();
+    init_interrupts();
+
     terminal_initialize();
 	splash_draw_luminos();
-
     terminal_writestring("\n");
     splash_draw_lamp();
+
+    uint32_t *debug_ptr = (uint32_t *) RAM_START - 4;
+    uint32_t current = *debug_ptr;
+    while (1) {
+        if (current != *debug_ptr) {
+            current = *debug_ptr;
+            printf("IRQ1 interrupt count: %d\n", current);
+        }
+    }
 }

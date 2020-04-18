@@ -1,5 +1,6 @@
 #include "keyboard.h"
 #include "memory.h"
+#include "port.h"
 #include "terminal.h"
 #include <stdint.h>
 
@@ -180,14 +181,8 @@ void init_keyboard() {
 }
 
 
-uint8_t read_port(uint16_t _port) {
-    uint8_t rv;
-    __asm__ __volatile__ ("inb %1, %0" : "=a" (rv) : "dN" (_port));
-    return rv;
-}
-
 keyboard_event get_last_event() {
-    return scanCodes[read_port(0x60)];
+    return scanCodes[port_read(0x60)];
 }
 
 keyboard_key wait_for_key() {
