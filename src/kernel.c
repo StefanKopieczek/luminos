@@ -28,6 +28,12 @@ void kernel_main(void) {
     terminal_writestring("\n");
     splash_draw_lamp();
 
+    printf("\nDumping GDT (desc: %p, table: %p):\n\n", GDT_DESC_ADDR, GDT_ADDR);
+    debug_memdump(GDT_DESC_ADDR, 100);
+
+    printf("\nDumping IDT: (desc: %p, table: %p)\n\n", IDT_DESC_ADDR, IDT_ADDR);
+    debug_memdump(IDT_DESC_ADDR, 100);
+
     uint32_t *debug_ptr = (uint32_t *) RAM_START - 4;
     uint32_t current = *debug_ptr;
     while (1) {

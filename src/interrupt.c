@@ -126,7 +126,7 @@ void remap_pics() {
 void init_idt() {
 	idt_entry *idt = (idt_entry *)IDT_ADDR;
     size_t idt_size = sizeof(idt_entry) * 256;
-    memset(idt, 0, idt_size);
+    memset(idt, 0xff, idt_size);
 
     idt_entry *p = idt;
 	write_interrupt_gate_entry(p++, (void *)irq0, CODE_SELECTOR, KERNEL_ONLY);
