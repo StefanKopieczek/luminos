@@ -25,17 +25,4 @@ void kernel_main(void) {
 
     terminal_writestring("\n");
     splash_draw_lamp();
-
-    printf("\nMemory dumping GDT...\n\n");
-    debug_memdump(GDT_DESC_ADDR, 100);
-
-    /*
-    init_keyboard();
-    while (1) {
-        keyboard_key key = wait_for_key();
-        if (key_is_char(key)) {
-            terminal_putchar(key_to_char(key));
-        }
-    }
-    */
 }
