@@ -13,7 +13,7 @@
 #define PIC_INIT_CMD 0x11
 #define PIC_EOI_CMD 0x20
 
-#define TASK_GATE 0x05
+#define TASK_GATE 0x15
 #define INTERRUPT_GATE 0x0e
 #define TRAP_GATE 0x0f
 
@@ -33,10 +33,13 @@ typedef struct {
     uint16_t isr_address_lsb;
     uint16_t gdt_selector;
     uint8_t zero;
-    bool is_active : 1;
-    uint8_t descriptor_privilege_level : 2;
-    bool is_task_gate : 1;
-    uint8_t gate_type : 4;
+
+    // Bit structure [appttttt]
+    // a - is enabled (1 = enabled)
+    // p - descriptor privilege level
+    // t - gate type
+    uint8_t info;
+
     uint16_t isr_address_msb;
 } idt_entry;
 
@@ -65,8 +68,11 @@ void init_idt();
 void write_task_gate_entry(idt_entry *dest, void *isr_address, uint16_t selector, uint8_t descriptor_privilege_level);
 void write_trap_gate_entry(idt_entry *dest, void *isr_address, uint16_t selector, uint8_t descriptor_privilege_level);
 void write_interrupt_gate_entry(idt_entry *dest, void *isr_address, uint16_t selector, uint8_t descriptor_privilege_level);
-void set_isr_address(idt_entry *dest, void *isr_address);
 void set_common_fields(idt_entry *);
+void set_isr_address(idt_entry *entry, void *isr_address);
+void set_enabled(idt_entry *entry, bool is_enabled);
+void set_descriptor_privilege_level(idt_entry *entry, uint8_t descriptor_privilege_level);
+void set_gate_type(idt_entry *entry, uint8_t gate_type);
 void send_master_eoi();
 void send_master_and_slave_eoi();
 
@@ -119,7 +125,7 @@ void remap_pics() {
     // Oddly this seems to be done by writing to the data port rather than the command port.
     // I can't find documentation, but from examples it seems like each bit corresponds to an IRQ line,
     // with low bits indicating the line should be enabled, and high bits indicating it should be disabled.
-	port_write(PIC_MASTER_DATA_PORT, 0xff); // TODO set these to 0x00 to actually enable them
+	port_write(PIC_MASTER_DATA_PORT, 0xfd); // TODO set these to 0x00 to actually enable them
 	port_write(PIC_SLAVE_DATA_PORT, 0xff);
 }
 
@@ -157,38 +163,61 @@ void init_idt() {
 void write_task_gate_entry(idt_entry *dest, void *isr_address, uint16_t selector, uint8_t descriptor_privilege_level) {
     set_common_fields(dest);
     set_isr_address(dest, isr_address);
+    set_descriptor_privilege_level(dest, descriptor_privilege_level);
+    set_gate_type(dest, TASK_GATE);
     dest->gdt_selector = selector;
-    dest->descriptor_privilege_level = descriptor_privilege_level;
-    dest->is_task_gate = true;
-    dest->gate_type = TASK_GATE;
 }
 
 void write_trap_gate_entry(idt_entry *dest, void *isr_address, uint16_t selector, uint8_t descriptor_privilege_level) {
     set_common_fields(dest);
     set_isr_address(dest, isr_address);
+    set_descriptor_privilege_level(dest, descriptor_privilege_level);
+    set_gate_type(dest, TRAP_GATE);
     dest->gdt_selector = selector;
-    dest->descriptor_privilege_level = descriptor_privilege_level;
-    dest->is_task_gate = false;
-    dest->gate_type = TRAP_GATE;
 }
 
 void write_interrupt_gate_entry(idt_entry *dest, void *isr_address, uint16_t selector, uint8_t descriptor_privilege_level) {
     set_common_fields(dest);
     set_isr_address(dest, isr_address);
+    set_descriptor_privilege_level(dest, descriptor_privilege_level);
+    set_gate_type(dest, INTERRUPT_GATE);
     dest->gdt_selector = selector;
-    dest->descriptor_privilege_level = descriptor_privilege_level;
-    dest->is_task_gate = false;
-    dest->gate_type = INTERRUPT_GATE;
 }
 
 void set_common_fields(idt_entry *entry) {
+    set_enabled(entry, true);
     entry->zero = 0;
-    entry->is_active = true;
 }
 
 void set_isr_address(idt_entry *entry, void *isr_address) {
     entry->isr_address_lsb = (0xffff) & (uint32_t) isr_address;
     entry->isr_address_msb = ((uint32_t) isr_address) >> 16;
+}
+
+void set_enabled(idt_entry *entry, bool is_enabled) {
+    // The is_enabled flag is bit 7 (MSB) of entry->info.
+    if (is_enabled) {
+        entry->info |= 0x80;
+    } else {
+        entry->info *= 0x7f;
+    }
+}
+
+void set_descriptor_privilege_level(idt_entry *entry, uint8_t dpl) {
+    // The DPL is stored in bits 5 and 6 of entry->info.
+    // TODO: Check 0<=dpl<4.
+    dpl &= 0x03;
+    entry->info = (entry->info & 0x9f) + (dpl << 5);
+}
+
+void set_gate_type(idt_entry *entry, uint8_t type) {
+    // The gate type forms the last five bits of entry->info.
+    // (Strictly, the highest of these, bit 4, is the 'storage segment' bit, but this
+    // should be 1 if and only if the gate is a task gate, so it's effectively part of
+    // the type).
+    // TODO check gate type is in range.
+    type &= 0x1f;
+    entry->info = (entry->info & 0xe0) + type;
 }
 
 /*
