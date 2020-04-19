@@ -17,9 +17,10 @@
 #define INTERRUPT_GATE 0x0e
 #define TRAP_GATE 0x0f
 
-// The index of a segment selector declared in gdt.c.
-// This must be a code selector.
-#define CODE_SELECTOR 0x01
+// The byte offset of a segment selector declared in gdt.c, relative to the start of the GDT.
+// GDT entries are 8 bytes long, so this value should be a multiple of 8.
+// The entry pointed to must be a code segment, and should probably be in ring level 0.
+#define CODE_SELECTOR 0x08
 
 #define KERNEL_ONLY 0
 
@@ -31,7 +32,7 @@ typedef struct {
 
 typedef struct {
     uint16_t isr_address_lsb;
-    uint16_t gdt_selector;
+    uint16_t gdt_selector; // Byte offset into the GDT/LDT (#bytes *not* #entries!)
     uint8_t zero;
 
     // Bit structure [appttttt]
@@ -125,7 +126,7 @@ void remap_pics() {
     // Oddly this seems to be done by writing to the data port rather than the command port.
     // I can't find documentation, but from examples it seems like each bit corresponds to an IRQ line,
     // with low bits indicating the line should be enabled, and high bits indicating it should be disabled.
-	port_write(PIC_MASTER_DATA_PORT, 0xfd); // TODO set these to 0x00 to actually enable them
+	port_write(PIC_MASTER_DATA_PORT, 0xff); // TODO set these to 0x00 to actually enable them
 	port_write(PIC_SLAVE_DATA_PORT, 0xff);
 }
 
