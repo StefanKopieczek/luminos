@@ -20,9 +20,10 @@
 #define TASK_SEGMENT_TYPE 0x01
 
 typedef struct {
-    uint16_t size_plus_one;
+    uint16_t size_minus_one;
     uint32_t table_address;
-} gdt_desc;
+} __attribute__((packed)) gdt_desc;
+
 
 typedef struct {
     uint16_t limit_lower_bits;
@@ -51,7 +52,7 @@ typedef struct {
     uint8_t access;
 
     uint8_t base_upper_bits;
-} gdt_entry;
+} __attribute__((packed)) gdt_entry;
 
 // Forward definitions
 void write_null_entry(gdt_entry *);
@@ -80,7 +81,7 @@ void init_gdt() {
 
     const int num_entries = (gdt_table - (gdt_entry *)GDT_ADDR);
     gdt_desc *descriptor = (gdt_desc *) GDT_DESC_ADDR;
-    descriptor->size_plus_one = num_entries + 1;
+    descriptor->size_minus_one = num_entries - 1;
     descriptor->table_address = (uint32_t) GDT_ADDR;
 
     asm("lgdt (%0)" :: "r" (&descriptor));

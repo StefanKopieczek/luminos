@@ -28,11 +28,10 @@
 
 #define KERNEL_ONLY 0
 
-
 typedef struct {
 	uint16_t size;
 	uint32_t address;
-} idt_desc;
+} __attribute__((packed)) idt_desc;
 
 typedef struct {
     uint16_t isr_address_lsb;
@@ -46,7 +45,7 @@ typedef struct {
     uint8_t info;
 
     uint16_t isr_address_msb;
-} idt_entry;
+} __attribute__((packed)) idt_entry;
 
 // The following are defined in interrupt_handlers.s.
 extern int load_idt(); // Expects a pointer to an idt_desc, and loads the corresponding IDT.
