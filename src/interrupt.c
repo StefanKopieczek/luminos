@@ -17,9 +17,13 @@
 #define INTERRUPT_GATE 0x0e
 #define TRAP_GATE 0x0f
 
-// The byte offset of a segment selector declared in gdt.c, relative to the start of the GDT.
-// GDT entries are 8 bytes long, so this value should be a multiple of 8.
-// The entry pointed to must be a code segment, and should probably be in ring level 0.
+// A selector for a GDT segment.
+// Bit field: [iiiiiiiiiiiitrr]
+// i - index of the entry in the GDT/LDT
+// t - 0 if GDT, 1 if LDT
+// r - ring level to use to access the descriptor
+// So for example, 0x08 = 0b000000000001000 indicates access to GDT index 1 in the GDT
+// with ring level zero.
 #define CODE_SELECTOR 0x08
 
 #define KERNEL_ONLY 0
@@ -32,7 +36,7 @@ typedef struct {
 
 typedef struct {
     uint16_t isr_address_lsb;
-    uint16_t gdt_selector; // Byte offset into the GDT/LDT (#bytes *not* #entries!)
+    uint16_t gdt_selector; // A segment selector bitfield (see CODE_SELECTOR comment above)
     uint8_t zero;
 
     // Bit structure [appttttt]
