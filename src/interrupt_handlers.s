@@ -2,6 +2,7 @@
 .global load_idt
 
 // interrupt.c registers these in the IDT.
+.global do_nothing
 .global irq0
 .global irq1
 .global irq2
@@ -58,6 +59,9 @@ load_idt:
   lidt (%edx)
   sti
   ret
+
+do_nothing:
+  iret
 
 irq0:
   pusha

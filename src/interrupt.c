@@ -50,7 +50,7 @@ typedef struct {
 // The following are defined in interrupt_handlers.s.
 extern int load_idt(); // Expects a pointer to an idt_desc, and loads the corresponding IDT.
 extern int irq0(); // The remaining methods are stub interrupt handlers that delegate to the
-extern int irq1(); // irq<n>_handler methods in this file.
+extern int irq1(); // handler methods in this file.
 extern int irq2();
 extern int irq3();
 extern int irq4();
@@ -65,6 +65,7 @@ extern int irq12();
 extern int irq13();
 extern int irq14();
 extern int irq15();
+extern int do_nothing();
 
 // Forward definitions
 void remap_pics();
@@ -129,7 +130,7 @@ void remap_pics() {
     // Oddly this seems to be done by writing to the data port rather than the command port.
     // I can't find documentation, but from examples it seems like each bit corresponds to an IRQ line,
     // with low bits indicating the line should be enabled, and high bits indicating it should be disabled.
-	port_write(PIC_MASTER_DATA_PORT, 0xff); // TODO set these to 0x00 to actually enable them
+	port_write(PIC_MASTER_DATA_PORT, 0xfd); // TODO set these to 0x00 to actually enable them
 	port_write(PIC_SLAVE_DATA_PORT, 0xff);
 }
 
@@ -138,7 +139,15 @@ void init_idt() {
     size_t idt_size = sizeof(idt_entry) * 256;
     memset(idt, 0xff, idt_size);
 
-    idt_entry *p = idt;
+    // Initialize the IDT with do-nothing handlers for each interrupt.
+    idt_entry default_entry;
+    write_interrupt_gate_entry(&default_entry, (void *)do_nothing, CODE_SELECTOR, KERNEL_ONLY);
+    for (int i = 0; i < 256; i++) {
+        idt[i] = default_entry;
+    }
+
+    // Set up the IRQs, starting at IDT index 20 as that's where remap_pics() mapped them.
+    idt_entry *p = &idt[0x20];
 	write_interrupt_gate_entry(p++, (void *)irq0, CODE_SELECTOR, KERNEL_ONLY);
 	write_interrupt_gate_entry(p++, (void *)irq1, CODE_SELECTOR, KERNEL_ONLY);
 	write_interrupt_gate_entry(p++, (void *)irq2, CODE_SELECTOR, KERNEL_ONLY);
