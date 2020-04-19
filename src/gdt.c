@@ -30,13 +30,6 @@ typedef struct {
     uint16_t base_lower_bits;
     uint8_t base_mid_bits;
 
-    // Bit structure: [gs00llll]
-    // g - use_page_granularity (if 1, limit is in 4KiB blocks; if 0, in 1B blocks)
-    // s - enable_32_bit_mode (if 1, selector defines 32-bit protected mode; if 0, 16-bit).
-    // 0 - must be set to 0.
-    // l - the most-significant bits of the 'limit' value. the LSBs are in limit_lower_bits.
-    uint8_t flags_and_limit;
-
     // Bit structure: [prrttdra]
     // p - 'present' bit (must be 1)
     // r - ring level from which the segment can be accessed (but see 'direction_conform')
@@ -50,6 +43,13 @@ typedef struct {
     //      * If data selector, whether write access is allowed (read is always allowed)
     // a - accessed bit - initial value irrelevant. Set to 1 by the CPU when the segment is accessed.
     uint8_t access;
+
+    // Bit structure: [gs00llll]
+    // g - use_page_granularity (if 1, limit is in 4KiB blocks; if 0, in 1B blocks)
+    // s - enable_32_bit_mode (if 1, selector defines 32-bit protected mode; if 0, 16-bit).
+    // 0 - must be set to 0.
+    // l - the most-significant bits of the 'limit' value. the LSBs are in limit_lower_bits.
+    uint8_t flags_and_limit;
 
     uint8_t base_upper_bits;
 } __attribute__((packed)) gdt_entry;
@@ -76,8 +76,8 @@ void write_system_entry(gdt_entry *,
 void init_gdt() {
     gdt_entry *gdt_table = GDT_ADDR;
     write_null_entry(gdt_table++);
-    write_code_entry(gdt_table++, 0x0, 0xffffffff, IS_NOT_READABLE, CONFORMS, 0);
-    write_data_entry(gdt_table++, 0x0, 0xffffffff, IS_WRITEABLE, GROWS_UP, 0);
+    write_code_entry(gdt_table++, 0x0, 0x000fffff, IS_NOT_READABLE, CONFORMS, 0);
+    write_data_entry(gdt_table++, 0x0, 0x000fffff, IS_WRITEABLE, GROWS_UP, 0);
 
     const int num_entries = (gdt_table - (gdt_entry *)GDT_ADDR);
     gdt_desc *descriptor = (gdt_desc *) GDT_DESC_ADDR;
