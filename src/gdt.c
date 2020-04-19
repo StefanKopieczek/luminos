@@ -54,6 +54,10 @@ typedef struct {
     uint8_t base_upper_bits;
 } __attribute__((packed)) gdt_entry;
 
+// Defined in load_gdt.s.
+// Expects a pointer to a gdt_desc struct.
+extern int load_gdt();
+
 // Forward definitions
 void write_null_entry(gdt_entry *);
 void write_code_entry(gdt_entry *,
@@ -84,7 +88,7 @@ void init_gdt() {
     descriptor->size_minus_one = num_entries - 1;
     descriptor->table_address = (uint32_t) GDT_ADDR;
 
-    asm("lgdt (%0)" :: "r" (&descriptor));
+    load_gdt(descriptor);
 }
 
 void write_base(gdt_entry *entry, uint32_t base) {
