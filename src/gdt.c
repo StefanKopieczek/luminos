@@ -85,7 +85,7 @@ void init_gdt() {
 
     const int num_entries = (gdt_table - (gdt_entry *)GDT_ADDR);
     gdt_desc *descriptor = (gdt_desc *) GDT_DESC_ADDR;
-    descriptor->size_minus_one = num_entries - 1;
+    descriptor->size_minus_one = sizeof(gdt_entry) * num_entries - 1;
     descriptor->table_address = (uint32_t) GDT_ADDR;
 
     load_gdt(descriptor);
