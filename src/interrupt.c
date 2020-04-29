@@ -130,8 +130,8 @@ void remap_pics() {
     // Oddly this seems to be done by writing to the data port rather than the command port.
     // I can't find documentation, but from examples it seems like each bit corresponds to an IRQ line,
     // with low bits indicating the line should be enabled, and high bits indicating it should be disabled.
-	port_write(PIC_MASTER_DATA_PORT, 0xfd); // TODO set these to 0x00 to actually enable them
-	port_write(PIC_SLAVE_DATA_PORT, 0xff);
+	port_write(PIC_MASTER_DATA_PORT, 0x00);
+	port_write(PIC_SLAVE_DATA_PORT, 0x00);
 }
 
 void init_idt() {
