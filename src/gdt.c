@@ -6,8 +6,8 @@
 #include "gdt.h"
 
 // Readability definitions for boolean params.
-#define GROWS_UP          true
-#define GROWS_DOWN        false
+#define GROWS_UP          false
+#define GROWS_DOWN        true
 #define CONFORMS          true
 #define DOES_NOT_CONFORM  false
 #define IS_READABLE       true
