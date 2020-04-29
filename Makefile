@@ -59,3 +59,7 @@ iso: $(BUILD)/luminos.iso
 .PHONY: qemu
 qemu: $(BUILD)/luminos.iso
 	qemu-system-i386 -cdrom $(BUILD)/luminos.iso -d cpu_reset,int -D qemu.log
+
+.PHONY: bochs
+bochs: $(BUILD)/luminos.iso
+	bochs
