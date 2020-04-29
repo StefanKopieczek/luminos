@@ -2,3 +2,4 @@ toolchain/
 build/
 *.[oa]
 *.sw[op]
+qemu.log

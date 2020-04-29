@@ -1,6 +1,7 @@
 #include "addresses.h"
 #include "debug.h"
 #include "gdt.h"
+#include "interrupt.h"
 #include "keyboard.h"
 #include "memory.h"
 #include "splash.h"
@@ -18,11 +19,16 @@
 #endif
 
 void kernel_main(void) {
+    uint32_t *debug_ptr = (uint32_t *) (RAM_START + 4);
+    *debug_ptr = 0x0;
+    uint32_t current = *debug_ptr;
+
     init_gdt();
     memory_init();
+    init_interrupts();
+
     terminal_initialize();
 	splash_draw_luminos();
-
     terminal_writestring("\n");
     splash_draw_lamp();
 }
