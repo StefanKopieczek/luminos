@@ -254,8 +254,6 @@ void irq0_handler() {
 }
 
 void irq1_handler() {
-    /*uint32_t *p = (uint32_t *)(RAM_START - 4);
-    (*p)++;*/
 	send_master_eoi();
 }
 

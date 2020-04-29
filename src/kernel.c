@@ -19,6 +19,10 @@
 #endif
 
 void kernel_main(void) {
+    uint32_t *debug_ptr = (uint32_t *) (RAM_START + 4);
+    *debug_ptr = 0x0;
+    uint32_t current = *debug_ptr;
+
     init_gdt();
     memory_init();
     init_interrupts();
@@ -27,19 +31,4 @@ void kernel_main(void) {
 	splash_draw_luminos();
     terminal_writestring("\n");
     splash_draw_lamp();
-
-    printf("\nDumping GDT (desc: %p, table: %p):\n\n", GDT_DESC_ADDR, GDT_ADDR);
-    debug_memdump(GDT_DESC_ADDR, 100);
-
-    printf("\nDumping IDT: (desc: %p, table: %p)\n\n", IDT_DESC_ADDR, IDT_ADDR);
-    debug_memdump(IDT_DESC_ADDR, 100);
-
-    uint32_t *debug_ptr = (uint32_t *) RAM_START - 4;
-    uint32_t current = *debug_ptr;
-    while (1) {
-        if (current != *debug_ptr) {
-            current = *debug_ptr;
-            printf("IRQ1 interrupt count: %d\n", current);
-        }
-    }
 }
