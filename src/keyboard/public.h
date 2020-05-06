@@ -1,9 +1,8 @@
-#ifndef _KEYBOARD_H
-#define _KEYBOARD_H
+#ifndef _KEYBOARD_PUBLIC_H
+#define _KEYBOARD_PUBLIC_H
 #include <stdbool.h>
 
 typedef int keyboard_event_type;
-
 typedef int keyboard_key;
 
 typedef struct {
@@ -11,11 +10,17 @@ typedef struct {
     keyboard_event_type type;
 } keyboard_event;
 
+typedef void (*keyboard_listener)(keyboard_event);
+
 void init_keyboard();
-keyboard_event get_last_event();
-keyboard_key wait_for_key();
 bool key_is_char(keyboard_key key);
 char key_to_char(keyboard_key key);
+
+/*
+ * Allows callers to register for callbacks when keys are pressed or released.
+ */
+void register_keyboard_listener(keyboard_listener);
+void unregister_keyboard_listener(keyboard_listener);
 
 #define KEY_PRESSED 1
 #define KEY_RELEASED 0
