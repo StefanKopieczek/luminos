@@ -1,9 +1,9 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "addresses.h"
-#include "memory.h"
-#include "gdt.h"
+#include "../addresses/public.h"
+#include "../memory/public.h"
+#include "public.h"
 
 // Readability definitions for boolean params.
 #define GROWS_UP          false

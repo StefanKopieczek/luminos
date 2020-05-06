@@ -1,12 +1,12 @@
-#include "addresses.h"
-#include "debug.h"
-#include "gdt.h"
-#include "interrupt.h"
-#include "keyboard.h"
-#include "memory.h"
-#include "splash.h"
-#include "string.h"
-#include "terminal.h"
+#include "addresses/public.h"
+#include "debugging/public.h"
+#include "gdt/public.h"
+#include "interrupts/public.h"
+#include "keyboard/public.h"
+#include "memory/public.h"
+#include "splash/public.h"
+#include "strings/public.h"
+#include "terminal/public.h"
 
 /* Check if the compiler thinks you are targeting the wrong OS */
 #if defined(__linux__)

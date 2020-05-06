@@ -1,5 +1,5 @@
-#include "addresses.h"
-#include "memory.h"
+#include "public.h"
+#include "../addresses/public.h"
 
 void *next = INVALID_ADDR;
 

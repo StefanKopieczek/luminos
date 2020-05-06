@@ -1,6 +1,6 @@
-#include "splash.h"
-#include "string.h"
-#include "terminal.h"
+#include "public.h"
+#include "../strings/public.h"
+#include "../terminal/public.h"
 
 const char* text = ""
 	" _                     _       _____ _____ \n"

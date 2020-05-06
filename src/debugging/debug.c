@@ -1,5 +1,5 @@
 #include <stddef.h>
-#include "terminal.h"
+#include "../terminal/public.h"
 
 void debug_memdump(void *start, int bytes) {
     uint8_t *startc = (uint8_t *) start;

@@ -1,10 +1,11 @@
-#include "addresses.h"
-#include "interrupt.h"
-#include "memory.h"
-#include "port.h"
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+
+#include "public.h"
+#include "../addresses/public.h"
+#include "../memory/public.h"
+#include "../ports/public.h"
 
 #define PIC_MASTER_CMD_PORT 0x20
 #define PIC_MASTER_DATA_PORT 0x21

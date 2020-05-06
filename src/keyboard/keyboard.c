@@ -1,8 +1,9 @@
-#include "keyboard.h"
-#include "memory.h"
-#include "port.h"
-#include "terminal.h"
 #include <stdint.h>
+
+#include "public.h"
+#include "../memory/public.h"
+#include "../ports/public.h"
+#include "../terminal/public.h"
 
 static keyboard_event scanCodes[256];
 

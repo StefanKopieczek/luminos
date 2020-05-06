@@ -1,7 +1,8 @@
 #include <stdarg.h>
 #include <stdbool.h>
-#include "string.h"
-#include "memory.h"
+
+#include "public.h"
+#include "../memory/public.h"
 
 char get_char_for_digit(int d) {
     if (d <= 9) {
