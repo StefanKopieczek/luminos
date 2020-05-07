@@ -3,9 +3,12 @@
 #include <stdint.h>
 
 #include "public.h"
+#include "interrupt.h"
+#include "interrupt_listener.h"
 #include "../addresses/public.h"
 #include "../memory/public.h"
 #include "../ports/public.h"
+#include "../terminal/public.h"
 
 #define PIC_MASTER_CMD_PORT 0x20
 #define PIC_MASTER_DATA_PORT 0x21
@@ -137,13 +140,13 @@ void remap_pics() {
 
 void init_idt() {
 	idt_entry *idt = (idt_entry *)IDT_ADDR;
-    size_t idt_size = sizeof(idt_entry) * 256;
+    size_t idt_size = sizeof(idt_entry) * NUM_INTERRUPTS;
     memset(idt, 0xff, idt_size);
 
     // Initialize the IDT with do-nothing handlers for each interrupt.
     idt_entry default_entry;
     write_interrupt_gate_entry(&default_entry, (void *)do_nothing, CODE_SELECTOR, KERNEL_ONLY);
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < NUM_INTERRUPTS; i++) {
         idt[i] = default_entry;
     }
 
@@ -251,65 +254,82 @@ void send_master_and_slave_eoi() {
 }
 
 void irq0_handler() {
+    fire_interrupt_event(INT_IRQ0);
 	send_master_eoi();
 }
 
 void irq1_handler() {
+    printf("IRQ1 handler fired\n");
+    fire_interrupt_event(INT_IRQ1);
 	send_master_eoi();
 }
 
 void irq2_handler() {
+    fire_interrupt_event(INT_IRQ2);
 	send_master_eoi();
 }
 
 void irq3_handler() {
+    fire_interrupt_event(INT_IRQ3);
 	send_master_eoi();
 }
 
 void irq4_handler() {
+    fire_interrupt_event(INT_IRQ4);
 	send_master_eoi();
 }
 
 void irq5_handler() {
+    fire_interrupt_event(INT_IRQ5);
 	send_master_eoi();
 }
 
 void irq6_handler() {
+    fire_interrupt_event(INT_IRQ6);
 	send_master_eoi();
 }
 
 void irq7_handler() {
+    fire_interrupt_event(INT_IRQ7);
 	send_master_eoi();
 }
 
 void irq8_handler() {
+    fire_interrupt_event(INT_IRQ8);
 	send_master_and_slave_eoi();
 }
 
 void irq9_handler() {
+    fire_interrupt_event(INT_IRQ9);
 	send_master_and_slave_eoi();
 }
 
 void irq10_handler() {
+    fire_interrupt_event(INT_IRQ10);
 	send_master_and_slave_eoi();
 }
 
 void irq11_handler() {
+    fire_interrupt_event(INT_IRQ11);
 	send_master_and_slave_eoi();
 }
 
 void irq12_handler() {
+    fire_interrupt_event(INT_IRQ12);
 	send_master_and_slave_eoi();
 }
 
 void irq13_handler() {
+    fire_interrupt_event(INT_IRQ13);
 	send_master_and_slave_eoi();
 }
 
 void irq14_handler() {
+    fire_interrupt_event(INT_IRQ14);
 	send_master_and_slave_eoi();
 }
 
 void irq15_handler() {
+    fire_interrupt_event(INT_IRQ15);
 	send_master_and_slave_eoi();
 }

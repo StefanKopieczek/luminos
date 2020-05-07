@@ -4,6 +4,7 @@
 #include "keyboard.h"
 #include "keyboard_listener.h"
 #include "scancodes.h"
+#include "../interrupts/public.h"
 #include "../memory/public.h"
 #include "../ports/public.h"
 #include "../terminal/public.h"
@@ -16,7 +17,9 @@ void init_keyboard() {
 }
 
 void register_for_interrupts() {
-    // TODO - when it's possible to register for interrupts, implement this method.
+    get_current_event(0x60);
+    register_interrupt_listener(INT_IRQ1, &interrupt_handler);
+    get_current_event(0x60);
 }
 
 void interrupt_handler(int interrupt) {

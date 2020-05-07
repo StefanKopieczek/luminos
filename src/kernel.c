@@ -18,6 +18,8 @@
 #error "This tutorial needs to be compiled with an ix86-elf compiler"
 #endif
 
+void on_keyboard_event(keyboard_event);
+
 void kernel_main(void) {
     uint32_t *debug_ptr = (uint32_t *) (RAM_START + 4);
     *debug_ptr = 0x0;
@@ -31,4 +33,11 @@ void kernel_main(void) {
 	splash_draw_luminos();
     terminal_writestring("\n");
     splash_draw_lamp();
+
+    printf("\nListening for interrupts\n");
+    register_keyboard_listener(&on_keyboard_event);
+}
+
+void on_keyboard_event(keyboard_event evt) {
+    printf("Received keyboard event!\n");
 }
