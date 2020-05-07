@@ -28,6 +28,7 @@ void kernel_main(void) {
     init_gdt();
     memory_init();
     init_interrupts();
+    init_keyboard();
 
     terminal_initialize();
 	splash_draw_luminos();
@@ -36,8 +37,11 @@ void kernel_main(void) {
 
     printf("\nListening for interrupts\n");
     register_keyboard_listener(&on_keyboard_event);
+    while(1);
 }
 
 void on_keyboard_event(keyboard_event evt) {
-    printf("Received keyboard event!\n");
+    if (evt.type == KEY_RELEASED && key_is_char(evt.key)) {
+        terminal_putchar(key_to_char(evt.key));
+    }
 }

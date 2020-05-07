@@ -2,7 +2,6 @@
 #include "interrupt.h"
 #include "interrupt_listener.h"
 #include "../memory/public.h"
-#include "../terminal/public.h"
 
 static interrupt_listener_node *listeners[NUM_INTERRUPTS];
 
@@ -42,7 +41,6 @@ void unregister_interrupt_listener(int interrupt, interrupt_listener listener) {
 }
 
 void fire_interrupt_event(int interrupt) {
-    printf("Firing event for interrupt %d", interrupt);
     interrupt_listener_node *current = listeners[interrupt];
     while (current) {
         current->listener(interrupt);

@@ -8,7 +8,6 @@
 #include "../addresses/public.h"
 #include "../memory/public.h"
 #include "../ports/public.h"
-#include "../terminal/public.h"
 
 #define PIC_MASTER_CMD_PORT 0x20
 #define PIC_MASTER_DATA_PORT 0x21
@@ -86,6 +85,7 @@ void send_master_eoi();
 void send_master_and_slave_eoi();
 
 void init_interrupts() {
+    init_interrupt_listener_queues();
     remap_pics();
   	init_idt();
 }
@@ -259,7 +259,6 @@ void irq0_handler() {
 }
 
 void irq1_handler() {
-    printf("IRQ1 handler fired\n");
     fire_interrupt_event(INT_IRQ1);
 	send_master_eoi();
 }
