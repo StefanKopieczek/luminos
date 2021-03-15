@@ -3,6 +3,7 @@
 #include "gdt/public.h"
 #include "interrupts/public.h"
 #include "keyboard/public.h"
+#include "logging/public.h"
 #include "memory/public.h"
 #include "splash/public.h"
 #include "strings/public.h"
@@ -37,6 +38,7 @@ void kernel_main(void) {
 
     printf("\nListening for interrupts\n");
     register_keyboard_listener(&on_keyboard_event);
+    kerror("Something bad happened lol");
     while(1);
 }
 
