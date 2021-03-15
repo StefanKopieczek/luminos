@@ -5,6 +5,7 @@
 #include "public.h"
 #include "interrupt.h"
 #include "interrupt_listener.h"
+#include "error_handlers.h"
 #include "../addresses/public.h"
 #include "../memory/public.h"
 #include "../ports/public.h"
@@ -89,6 +90,7 @@ void init_interrupts() {
     enable_interrupt_listeners();
     remap_pics();
   	init_idt();
+    init_default_error_handlers();
 }
 
 /*

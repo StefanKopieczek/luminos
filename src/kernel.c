@@ -38,7 +38,6 @@ void kernel_main(void) {
 
     printf("\nListening for interrupts\n");
     register_keyboard_listener(&on_keyboard_event);
-    kerror("Something bad happened lol");
     while(1);
 }
 
