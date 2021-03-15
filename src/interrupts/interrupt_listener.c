@@ -1,12 +1,23 @@
+#include <stdbool.h>
 #include "public.h"
 #include "interrupt.h"
 #include "interrupt_listener.h"
 #include "../memory/public.h"
 
 static interrupt_listener_node *listeners[NUM_INTERRUPTS];
+static bool interrupt_listeners_enabled;
 
 void init_interrupt_listener_queues() {
     memset(listeners, 0, sizeof(interrupt_listener_node *) * NUM_INTERRUPTS);
+    interrupt_listeners_enabled = false;
+}
+
+void enable_interrupt_listeners() {
+    interrupt_listeners_enabled = true;
+}
+
+void disable_interrupt_listeners() {
+    interrupt_listeners_enabled = false;
 }
 
 void register_interrupt_listener(int interrupt, interrupt_listener listener) {
@@ -41,6 +52,10 @@ void unregister_interrupt_listener(int interrupt, interrupt_listener listener) {
 }
 
 void fire_interrupt_event(int interrupt) {
+    if (!interrupt_listeners_enabled) {
+        return;
+    }
+
     interrupt_listener_node *current = listeners[interrupt];
     while (current) {
         current->listener(interrupt);

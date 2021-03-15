@@ -86,6 +86,7 @@ void send_master_and_slave_eoi();
 
 void init_interrupts() {
     init_interrupt_listener_queues();
+    enable_interrupt_listeners();
     remap_pics();
   	init_idt();
 }

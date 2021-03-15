@@ -44,5 +44,7 @@ typedef void (*interrupt_listener)(int interrupt);
 void init_interrupts();
 void register_interrupt_listener(int interrupt, interrupt_listener);
 void unregister_interrupt_listener(int interrupt, interrupt_listener);
+void enable_interrupt_listeners();
+void disable_interrupt_listeners();
 
 #endif
