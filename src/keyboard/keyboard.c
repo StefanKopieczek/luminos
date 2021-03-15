@@ -5,6 +5,7 @@
 #include "keyboard_listener.h"
 #include "scancodes.h"
 #include "../interrupts/public.h"
+#include "../logging/public.h"
 #include "../memory/public.h"
 #include "../ports/public.h"
 #include "../terminal/public.h"
@@ -23,7 +24,9 @@ void register_for_interrupts() {
 }
 
 void interrupt_handler(int interrupt) {
-    // TODO: Check that interrupt is IRQ1
+    if (interrupt != INT_IRQ1) {
+        kerror("Programmer error - keyboard handler called for interrupt other than IRQ1");
+    }
     keyboard_event *event = get_current_event();
     fire_keyboard_event(event);
 }

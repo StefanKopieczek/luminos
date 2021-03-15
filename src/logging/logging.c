@@ -4,6 +4,7 @@
 
 void kerror(const char *msg) {
     disable_interrupt_listeners();
+    terminal_initialize();
     terminal_setcolor(4);
     terminal_writestring(msg);
     while(1);

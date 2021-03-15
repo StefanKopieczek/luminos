@@ -7,6 +7,7 @@
 #include "interrupt_listener.h"
 #include "error_handlers.h"
 #include "../addresses/public.h"
+#include "../logging/public.h"
 #include "../memory/public.h"
 #include "../ports/public.h"
 
@@ -225,7 +226,9 @@ void set_enabled(idt_entry *entry, bool is_enabled) {
 
 void set_descriptor_privilege_level(idt_entry *entry, uint8_t dpl) {
     // The DPL is stored in bits 5 and 6 of entry->info.
-    // TODO: Check 0<=dpl<4.
+    if (dpl > 3) {
+        kerror("Cannot set descriptor privilege level greater than 3");
+    }
     dpl &= 0x03;
     entry->info = (entry->info & 0x9f) + (dpl << 5);
 }
@@ -235,7 +238,9 @@ void set_gate_type(idt_entry *entry, uint8_t type) {
     // (Strictly, the highest of these, bit 4, is the 'storage segment' bit, but this
     // should be 1 if and only if the gate is a task gate, so it's effectively part of
     // the type).
-    // TODO check gate type is in range.
+    if (type > 0x1f) {
+        kerror("Invalid gate type; must be <= 0x1f");
+    }
     type &= 0x1f;
     entry->info = (entry->info & 0xe0) + type;
 }

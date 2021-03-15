@@ -1,5 +1,6 @@
 #include "public.h"
 #include "keyboard_listener.h"
+#include "../logging/public.h"
 #include "../memory/public.h"
 
 static keyboard_listener_node *listeners = 0;
@@ -18,7 +19,7 @@ void register_keyboard_listener(keyboard_listener listener) {
 
 void unregister_keyboard_listener(keyboard_listener listener) {
     if (!listeners) {
-        // TODO: kerror here
+        kerror("Unable to unregister keyboard listener, as no listener was found (in fact, no listeners are registered");
         return;
     }
 
@@ -32,7 +33,7 @@ void unregister_keyboard_listener(keyboard_listener listener) {
         }
     }
 
-    // TODO: kerror here, as no listener was found.
+    kerror("Unable to unregister keyboard listener, as no listener was found");
 }
 
 void fire_keyboard_event(keyboard_event *event) {

@@ -2,6 +2,7 @@
 #include <stdint.h>
 
 #include "../addresses/public.h"
+#include "../logging/public.h"
 #include "../memory/public.h"
 #include "public.h"
 
@@ -101,7 +102,9 @@ void write_base(gdt_entry *entry, uint32_t base) {
 void write_limit(gdt_entry *entry, uint32_t limit) {
     // The lower 16 bits of the limit have their own field in the struct.
     // The upper 4 bits are stored in the lower nibble of entry->flags_and_limit.
-    // TODO check that limit is in the encodable range (20 bits).
+    if ((limit >> 20) > 0) {
+        kerror("Requested GDT limit greater than the allowable maximum of 20 bits");
+    }
     entry->limit_lower_bits = limit & 0xffff;
     entry->flags_and_limit = (entry->flags_and_limit & 0xf0) | (limit >> 16);
 }
@@ -117,14 +120,18 @@ void set_present(gdt_entry *entry, bool is_present) {
 
 void set_ring_level(gdt_entry *entry, uint8_t ring_level) {
     // The ring level is stored in bits 5 and 6 of entry->access.
-    // TODO: Ensure it's within range.
+    if (ring_level > 3) {
+        kerror("Requested GDT ring level is greater than the allowable max of 3");
+    }
     ring_level &= 0x03;
     entry->access = (entry->access & 0x9f) | (ring_level << 5);
 }
 
 void set_type(gdt_entry *entry, uint8_t segment_type) {
     // The segment type is stored in bits 3 and 4 of entry->access.
-    // TODO ensure it's in range.
+    if (segment_type > 3) {
+        kerror("Requested GDT segment type is greater than the allowable max of 3");
+    }
     segment_type &= 0x03;
     entry->access = (entry->access & 0xe7) | (segment_type << 3);
 }

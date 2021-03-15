@@ -2,6 +2,7 @@
 #include "public.h"
 #include "interrupt.h"
 #include "interrupt_listener.h"
+#include "../logging/public.h"
 #include "../memory/public.h"
 
 static interrupt_listener_node *listeners[NUM_INTERRUPTS];
@@ -34,8 +35,7 @@ void register_interrupt_listener(int interrupt, interrupt_listener listener) {
 
 void unregister_interrupt_listener(int interrupt, interrupt_listener listener) {
     if (!listeners[interrupt]) {
-        // TODO: kerror here
-        return;
+        kerror("Unable to unregister interrupt listener, as it was not found (in fact, that interrupt had none at all)");
     }
 
     interrupt_listener_node **parent_link = &listeners[interrupt];
@@ -48,7 +48,7 @@ void unregister_interrupt_listener(int interrupt, interrupt_listener listener) {
         }
     }
 
-    // TODO: kerror here, as no interrupt was found
+    kerror("Unable to unregister interrupt listener, as it was not found");
 }
 
 void fire_interrupt_event(int interrupt) {

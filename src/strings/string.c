@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 #include "public.h"
+#include "../logging/public.h"
 #include "../memory/public.h"
 
 char get_char_for_digit(int d) {
@@ -25,7 +26,9 @@ char *int2hex(int n) {
 }
 
 char *int2str(int n, int base) {
-    // TODO check base <= 16.
+    if (base > 16) {
+        kerror("Bases greater than 16 unsupported in int2str");
+    }
 
     // Worst case is base 2, where each digit (each bit) will need a char.
     // That makes 32 bytes, and we need one for \0 as well.
@@ -60,7 +63,9 @@ char *uint2hex(unsigned int n) {
 }
 
 char *uint2str(unsigned int n, int base) {
-    // TODO check base <= 16.
+    if (base > 16) {
+        kerror("Bases greater than 16 unsupported in uint2str");
+    }
 
     // Worst case is base 2, where each digit (each bit) will need a char.
     // That makes 32 bytes, and we need one for \0 as well.
