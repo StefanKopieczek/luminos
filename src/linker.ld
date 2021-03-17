@@ -11,15 +11,18 @@ SECTIONS
     . = 0x00100000;
 
     _kernel_start = .;
-    .multiboot.data : {
+    .multiboot.data ALIGN(4K) : {
+        /* I don't understand why I need this padding, but if I omit
+         * it then the multiboot header ends up in the wrong place... */
+        SHORT(0xaaaa)
         *(.multiboot.data)
     }
 
-    .multiboot.text : {
+    .multiboot.text ALIGN(4K) : {
         *(.multiboot.text)
     }
 
-    . += 0xC0000000;
+    . += 0x0C000000;
 
     .text ALIGN(4K) : AT (ADDR(.text) - 0xC0000000)
     {
